@@ -12,7 +12,7 @@ A Flutter application that simulates the Telegram interface, focusing on State M
 
 | Home (Arabic) | Home (English) | Side Drawer |
 | :---: | :---: | :---: |
-| ![Home AR](ScreenShots/Home_a.png) | ![Home EN](ScreenShots/Home_en.png) | ![Drawer](ScreenShots/Drawer_ar.png) |
+| ![Home AR](ScreenShots/Home_en.png) | ![Home EN](ScreenShots/Home_en.png) | ![Drawer](ScreenShots/Drawer_ar.png) |
 
 | Add User | Chat Screen | Login Screen |
 | :---: | :---: | :---: |
