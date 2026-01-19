@@ -26,11 +26,13 @@ class _SplashScreenState extends State<SplashScreen> {
       backgroundColor: Color.fromARGB(255, 78, 150, 194),
       body: Center(
         child:Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Icon(
               Icons.send_rounded,
               size: 80,
-              color: Color.fromARGB(255, 78, 150, 194),
+              color: Colors.white,
             ),
 
           Text(
