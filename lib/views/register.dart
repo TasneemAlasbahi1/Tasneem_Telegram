@@ -1,101 +1,68 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../controllers/login_controller.dart'; // تأكدي من صحة المسار
 
-class Register extends StatefulWidget {
+class Register extends StatelessWidget {
   const Register({super.key});
 
   @override
-  State<Register> createState() => _RegisterState();
-}
-
-class _RegisterState extends State<Register> {
-
-  TextEditingController name = TextEditingController();
-  TextEditingController email = TextEditingController();
-  TextEditingController password = TextEditingController();
-
-  @override
   Widget build(BuildContext context) {
+    // ربط الصفحة بالكنترولر
+    final LoginController controller = Get.put(LoginController());
+
     return Scaffold(
       appBar: AppBar(
-         title: Text('Register',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize:25 ),),
-          backgroundColor: const Color.fromARGB(255, 78, 150, 194),
-          iconTheme: const IconThemeData(color: Colors.white),
-         
-        
-        
-        
+        title: const Text('Register', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 25)),
+        backgroundColor: const Color.fromARGB(255, 78, 150, 194),
+       // backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(
           children: [
-
+            // حقل الاسم (يمكنك إضافة متغير له في الكنترولر إذا أردتِ تخزينه)
             TextField(
-
-              controller: name,
               decoration: InputDecoration(
                 labelText: "Name",
-                prefixIcon: Icon(Icons.person,color: Color.fromARGB(255, 78, 150, 194),),
-                border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                  borderSide:BorderSide(
-                    color: Color.fromARGB(255, 78, 150, 194),
-                    width: 2), 
-                  
-                ),
-
-
+                prefixIcon: const Icon(Icons.person, color: Color.fromARGB(255, 78, 150, 194)),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
+            const SizedBox(height: 10),
 
-            SizedBox(height: 10),
-
+            // حقل البريد المرتبط بالكنترولر
             TextField(
-              controller: email,
+              controller: controller.emailController,
               decoration: InputDecoration(
                 labelText: "Email",
-                prefixIcon: Icon(Icons.email,color: Color.fromARGB(255, 78, 150, 194),),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide:BorderSide(
-                    color: Color.fromARGB(255, 78, 150, 194),
-                    width: 2), 
-                  
-                ),
-                
+                prefixIcon: const Icon(Icons.email, color: Color.fromARGB(255, 78, 150, 194)),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
+            const SizedBox(height: 10),
 
-            SizedBox(height: 10),
-
+            // حقل الباسورد المرتبط بالكنترولر
             TextField(
-              controller: password,
+              controller: controller.passwordController,
               obscureText: true,
               decoration: InputDecoration(
                 labelText: "Password",
-                prefixIcon: Icon(Icons.lock,color: Color.fromARGB(255, 78, 150, 194),),
-                border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                  borderSide:BorderSide(
-                    color: Color.fromARGB(255, 78, 150, 194),
-                    width: 2), 
-                ),
+                prefixIcon: const Icon(Icons.lock, color: Color.fromARGB(255, 78, 150, 194)),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
-
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             ElevatedButton(
-                style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(Color.fromARGB(255, 78, 150, 194))
-              
-              
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 78, 150, 194),
               ),
               onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Account Created")),
-                );
+                // استدعاء دالة التسجيل التي تحفظ البيانات في GetStorage
+                controller.register();
               },
-              child: Text("Register",style: TextStyle(color: Colors.white),),
+              child: const Text("Register", style: TextStyle(color: Colors.white)),
             ),
           ],
         ),

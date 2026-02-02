@@ -14,7 +14,8 @@ class Login extends StatelessWidget {
       appBar: AppBar(
         // استخدام اللغات ( .tr )
         title: Text('login'.tr, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 25)),
-        backgroundColor: const Color.fromARGB(255, 78, 150, 194),
+       backgroundColor: const Color.fromARGB(255, 78, 150, 194),
+      // backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         iconTheme: const IconThemeData(color: Colors.white),
         actions: [
           // زر لتغيير اللغة للتجربة
@@ -33,6 +34,8 @@ class Login extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             TextField(
               controller: controller.emailController,

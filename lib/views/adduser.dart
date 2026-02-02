@@ -1,65 +1,127 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_16/controllers/user_controller.dart';
 import 'package:get/get.dart';
-import 'drawer.dart';
-import '../controllers/user_controller.dart';
+import 'dart:io';
 
 class Adduser extends StatelessWidget {
   const Adduser({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // نتحقق إذا كان الكنترولر شغال أو نشغله
-    final UserController controller = Get.isRegistered<UserController>() 
-        ? Get.find<UserController>() 
-        : Get.put(UserController());
+    final UserController controller = Get.find<UserController>();
+    
+    final int? userId = Get.arguments is int ? Get.arguments : null;
+    final bool isEditMode = userId != null;
+
+    // الحصول على لون النص المناسب للثيم الحالي (أبيض في الليلي وأسود في الفاتح)
+    Color textColor = Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black;
 
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text("Telegram", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 25)),
-        backgroundColor: const Color.fromARGB(255, 78, 150, 194),
-        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        elevation: 0,
+        iconTheme: IconThemeData(color: textColor), // تلوين زر الرجوع تلقائياً
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            controller.clearFields();
+            Get.back();
+          },
+        ),
+        title: Text(
+          isEditMode ? "edit".tr : "add_user".tr, 
+          style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
+        ),
       ),
-      drawer: const MyDrawer(),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: controller.nameController,
+      body: SingleChildScrollView( 
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          children: [
+            // اختيار الصورة
+            Obx(() => GestureDetector(
+                  onTap: () => controller.pickImage(),
+                  child: CircleAvatar(
+                    radius: 50,
+                    backgroundColor: Colors.grey[300],
+                    backgroundImage: controller.selectedImagePath.value.isNotEmpty
+                        ? FileImage(File(controller.selectedImagePath.value))
+                        : null,
+                    child: controller.selectedImagePath.value.isEmpty
+                        ? const Icon(Icons.camera_alt, size: 40, color: Colors.white)
+                        : null,
+                  ),
+                )),
+            const SizedBox(height: 30),
+            
+            // حقل الاسم الأول
+            TextField(
+              controller: controller.firstNameController,
+              style: TextStyle(color: textColor),
               decoration: InputDecoration(
-                labelText: "Name",
-                fillColor: Colors.white,
-                filled: true,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(40)),
+                labelText: "first_name".tr, 
+                labelStyle: const TextStyle(color: Colors.grey),
+                border: const OutlineInputBorder(),
+                enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
               ),
             ),
-          ),
-          ElevatedButton(
-            style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll(Colors.white)),
-            onPressed: () => controller.addUser(),
-            child: const Text("أضف مستخدم", style: TextStyle(color: Colors.black)),
-          ),
-          Expanded(
-            child: Obx(() => ListView.builder(
-              itemCount: controller.users.length,
-              itemBuilder: (context, i) => Card(
-                color: const Color.fromARGB(255, 128, 169, 195),
-                child: ListTile(
-                  onTap: () => Get.toNamed('/chat', arguments: controller.users[i]),
-                  leading: IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.red),
-                    onPressed: () => controller.deleteUser(i),
-                  ),
-                  title: Text(controller.users[i], textAlign: TextAlign.center, style: const TextStyle(color: Colors.white)),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.edit, color: Colors.blue),
-                    onPressed: () => controller.editUser(i),
-                  ),
-                ),
+            const SizedBox(height: 15),
+            
+            // حقل الاسم الأخير
+            TextField(
+              controller: controller.lastNameController,
+              style: TextStyle(color: textColor),
+              decoration:  InputDecoration(
+                labelText: "last_name".tr, 
+                labelStyle: TextStyle(color: Colors.grey),
+                border: OutlineInputBorder(),
+                enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
               ),
-            )),
-          )
-        ],
+            ),
+            const SizedBox(height: 15),
+            
+            // حقل الهاتف
+            TextField(
+              controller: controller.phoneController,
+              style: TextStyle(color: textColor),
+              keyboardType: TextInputType.phone,
+              decoration: InputDecoration(
+                prefixIcon: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Text("🇾🇪 +967", style: TextStyle(fontSize: 16, color: textColor)),
+                ),
+                labelText: "phone".tr, 
+                labelStyle: const TextStyle(color: Colors.grey),
+                border: const OutlineInputBorder(),
+                enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+              ),
+            ),
+          ],
+        ),
+      ),
+      
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: const Color.fromARGB(255, 78, 150, 194),
+        child: const Icon(Icons.check, color: Colors.white),
+        onPressed: () {
+          if (isEditMode) {
+            controller.updateUser(userId!);
+          } else {
+            controller.addUser();
+          }
+
+          // رسالة نجاح (Snackbar) تظهر بلون أخضر وباللغة الصحيحة
+          Get.snackbar(
+            "ok".tr, 
+            "success_update".tr,
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.green.withOpacity(0.9),
+            colorText: Colors.white,
+            margin: const EdgeInsets.all(15),
+            duration: const Duration(seconds: 2),
+            icon: const Icon(Icons.check_circle, color: Colors.white),
+          );
+        },
       ),
     );
   }
